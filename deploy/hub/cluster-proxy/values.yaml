@@ -1,0 +1,12 @@
+# Image of the cluster-gateway instances
+image: champly/cluster-proxy-addon-manager:v0.0.1
+
+# Number of replicas
+replicas: 1
+
+spokeAddonNamespace: "open-cluster-management-cluster-proxy"
+
+# targetCluster: test-cluster (render it manually via `helm template -f..`)
+
+proxyServerImage: champly/proxy-server-amd64:v0.0.1
+proxyAgentImage: champly/proxy-agent-amd64:v0.0.1

@@ -1,0 +1,19 @@
+apiVersion: proxy.open-cluster-management.io/v1alpha1
+kind: ManagedProxyConfiguration
+metadata:
+  name: cluster-proxy
+spec:
+  authentication:
+    dump:
+      secrets: {}
+    signer:
+      type: SelfSigned
+  proxyServer:
+    image: {{ .Values.proxyServerImage }}
+    namespace: {{ .Release.Namespace }}
+    entrypoint:
+      type: LoadBalancerService
+      loadBalancerService: {}
+  proxyAgent:
+    image: {{ .Values.proxyAgentImage }}
+    proxyServerHost:
