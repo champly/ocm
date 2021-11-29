@@ -1,3 +1,5 @@
+BOOTSTRAP-SECRET-FILE=/Users/champly/Dropbox/k8sconfig/dev-test/cn-test-gz-01-tke-bj5.yaml
+
 install-hub-crd:
 	kubectl apply -f deploy/hub/crd/addon.clustermanagementaddons.yaml
 	kubectl apply -f deploy/hub/crd/addon.managedclusteraddons.yaml
@@ -52,14 +54,42 @@ uninstall-hub-registration:
 	kubectl delete -f deploy/hub/registration/service_account.yaml --ignore-not-found=true
 	kubectl delete -f deploy/hub/registration/namespace.yaml --ignore-not-found=true
 
-install-agent-registration:
-
 install-agent-crd:
+	kubectl apply -f deploy/agent/crd/clusters.clusterclaims.yaml
+
+uninstall-agent-crd:
+	kubectl delete -f deploy/agent/crd/clusters.clusterclaims.yaml
+
+install-agent-bootstrap-secret:
+	kubectl create secret generic bootstrap-secret --from-file=kubeconfig=$(BOOTSTRAP-SECRET-FILE) -n open-cluster-management
+
+uninstall-agent-bootstrap-secret:
+	kubectl delete secret bootstrap-secret -n open-cluster-management
 
 install-agent-registration:
+	kubectl apply -f deploy/agent/registration/namespace.yaml
+	kubectl apply -f deploy/agent/registration/clusterrole.yaml
+	kubectl apply -f deploy/agent/registration/clusterrole_binding.yaml
+	kubectl apply -f deploy/agent/registration/deployment.yaml
+	kubectl apply -f deploy/agent/registration/role.yaml
+	kubectl apply -f deploy/agent/registration/role_binding.yaml
+	kubectl apply -f deploy/agent/registration/service_account.yaml
+
+uninstall-agent-registration:
+	kubectl delete -f deploy/agent/registration/clusterrole.yaml
+	kubectl delete -f deploy/agent/registration/clusterrole_binding.yaml
+	kubectl delete -f deploy/agent/registration/deployment.yaml
+	kubectl delete -f deploy/agent/registration/role.yaml
+	kubectl delete -f deploy/agent/registration/role_binding.yaml
+	kubectl delete -f deploy/agent/registration/service_account.yaml
+	kubectl delete -f deploy/agent/registration/namespace.yaml
 
 
 install-hub: install-hub-crd install-hub-cluster-proxy install-hub-registration
 
 uninstall-hub: uninstall-hub-cluster-proxy uninstall-hub-registration uninstall-hub-crd
+
+install-agent: install-agent-crd install-agent-registration install-agent-bootstrap-secret
+
+uninstall-agent: uninstall-agent-bootstrap-secret uninstall-agent-registration uninstall-agent-crd
 

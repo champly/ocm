@@ -45,7 +45,3 @@ spec:
       - name: hub-kubeconfig
         emptyDir:
           medium: Memory
-      hostAliases:
-        - ip: "10.248.227.33"
-          hostnames:
-            - "cls-jz14nj13.ccs.tencent-cloud.com"
