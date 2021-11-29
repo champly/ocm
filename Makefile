@@ -1,4 +1,4 @@
-BOOTSTRAP-SECRET-FILE=/Users/champly/Dropbox/k8sconfig/dev-test/cn-test-gz-01-tke-bj5.yaml
+BOOTSTRAP-SECRET-FILE=$(HOME)/.kube/config
 
 install-hub-crd:
 	kubectl apply -f deploy/hub/crd/addon.clustermanagementaddons.yaml
