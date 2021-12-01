@@ -63,7 +63,7 @@ install-agent-crd:
 
 uninstall-agent-crd:
 	kubectl delete -f deploy/agent/crd/clusters.clusterclaims.yaml --ignore-not-found=true
-	kubectl delete -f deploy/agent/crd/appliedmanifestworks.yaml --ignore-not-fount=true
+	kubectl delete -f deploy/agent/crd/appliedmanifestworks.yaml --ignore-not-found=true
 
 install-agent-bootstrap-secret:
 	kubectl create secret generic bootstrap-secret --from-file=kubeconfig=$(BOOTSTRAP-SECRET-FILE) -n open-cluster-management
