@@ -23,8 +23,9 @@ install-hub-cluster-proxy:
 	helm upgrade --install -n open-cluster-management-cluster-proxy --create-namespace cluster-proxy deploy/hub/cluster-proxy
 
 uninstall-hub-cluster-proxy:
-	kubectl delete managedcluster -A --all-namespaces
-	kubectl delete managedclusteraddon -A --all-namespaces
+	kubectl delete managedcluster --all
+	kubectl delete managedclusteraddon --all
+	kubectl delete manifestworks --all
 	helm uninstall -n open-cluster-management-cluster-proxy cluster-proxy
 	kubectl delete clustermanagementaddon cluster-proxy --ignore-not-found=true
 	kubectl delete clusterroles open-cluster-management:hub --ignore-not-found=true
