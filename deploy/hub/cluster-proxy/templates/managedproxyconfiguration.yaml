@@ -11,9 +11,11 @@ spec:
   proxyServer:
     image: {{ .Values.proxyServerImage }}
     namespace: {{ .Release.Namespace }}
+    replicas: 1
     entrypoint:
       type: LoadBalancerService
       loadBalancerService: {}
   proxyAgent:
     image: {{ .Values.proxyAgentImage }}
+    replicas: 1
     proxyServerHost:

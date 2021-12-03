@@ -1,5 +1,4 @@
-# BOOTSTRAP-SECRET-FILE?=$(HOME)/.kube/config
-# HUB-SECRET-FILE?=$(HOME)/.kube/config
+HUB-KUBECONFIG?=$(HOME)/.kube/config
 
 install-hub-crd:
 	kubectl apply -f deploy/hub/crd/addon.clustermanagementaddons.yaml
@@ -67,10 +66,11 @@ uninstall-agent-crd:
 	kubectl delete -f deploy/agent/crd/appliedmanifestworks.yaml --ignore-not-found=true
 
 install-agent-bootstrap-secret:
-	kubectl create secret generic bootstrap-secret --from-file=kubeconfig=$(BOOTSTRAP-SECRET-FILE) -n open-cluster-management
+	kubectl create secret generic bootstrap-secret --from-file=kubeconfig=$(HUB-KUBECONFIG) -n open-cluster-management
 
 uninstall-agent-bootstrap-secret:
 	kubectl delete secret bootstrap-secret -n open-cluster-management
+	kubectl delete appliedmanifestworks --all
 
 install-agent-registration:
 	kubectl apply -f deploy/agent/registration/namespace.yaml
@@ -92,7 +92,7 @@ uninstall-agent-registration:
 
 install-agent-work:
 	kubectl create namespace open-cluster-management-agent
-	kubectl create secret generic hub-kubeconfig-secret --from-file=kubeconfig=$(HUB-SECRET-FILE) -n open-cluster-management-agent
+	kubectl create secret generic hub-kubeconfig-secret --from-file=kubeconfig=$(HUB-KUBECONFIG) -n open-cluster-management-agent
 	kubectl apply -f deploy/agent/work/clusterrole.yaml
 	kubectl apply -f deploy/agent/work/clusterrole_binding.yaml
 	kubectl apply -f deploy/agent/work/clusterrole_binding_addition.yaml
@@ -113,6 +113,13 @@ uninstall-agent-work:
 install-hub: install-hub-crd install-hub-cluster-proxy install-hub-registration
 
 uninstall-hub: uninstall-hub-cluster-proxy uninstall-hub-registration uninstall-hub-crd
+	@kubectl delete -f deploy/hub/managedclusteraddon.yaml --ignore-not-found=true
+
+apply-managedcluster:
+	@kubectl apply -f deploy/hub/managedclusteraddon.yaml
+
+apply-hub-kubeconfig:
+	kubectl create secret generic cluster-proxy-hub-kubeconfig --from-file=kubeconfig=$(HUB-KUBECONFIG) -n open-cluster-management-cluster-proxy
 
 install-agent: install-agent-crd install-agent-registration install-agent-bootstrap-secret install-agent-work
 
