@@ -20,6 +20,8 @@ spec:
       type: LoadBalancerService
       loadBalancerService: {}
       {{- end }}
+    replicas: 1
   proxyAgent:
     image: {{ .Values.proxyAgentImage }}
+    replicas: 1
     proxyServerHost:
