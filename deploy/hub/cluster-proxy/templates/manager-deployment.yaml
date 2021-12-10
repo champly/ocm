@@ -22,4 +22,4 @@ spec:
           args:
             - --leader-elect=true
             - --signer-secret-namespace={{ .Release.Namespace }}
-          - -v=4
+            - -v=4
