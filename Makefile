@@ -10,13 +10,13 @@ install-hub-crd:
 	kubectl apply -f deploy/hub/crd/work.manifestworks.yaml
 
 uninstall-hub-crd:
-	kubectl delete -f deploy/hub/crd/addon.clustermanagementaddons.yaml
-	kubectl delete -f deploy/hub/crd/addon.managedclusteraddons.yaml
-	kubectl delete -f deploy/hub/crd/clusters.managedclusters.yaml
-	kubectl delete -f deploy/hub/crd/clusters.managedclustersetbindings.yaml
-	kubectl delete -f deploy/hub/crd/clusters.managedclustersets.yaml
-	kubectl delete -f deploy/hub/crd/proxy.managedproxyconfigurations.yaml
-	kubectl delete -f deploy/hub/crd/work.manifestworks.yaml
+	kubectl delete -f deploy/hub/crd/addon.clustermanagementaddons.yaml --ignore-not-found=true
+	kubectl delete -f deploy/hub/crd/addon.managedclusteraddons.yaml --ignore-not-found=true
+	kubectl delete -f deploy/hub/crd/clusters.managedclusters.yaml --ignore-not-found=true
+	kubectl delete -f deploy/hub/crd/clusters.managedclustersetbindings.yaml --ignore-not-found=true
+	kubectl delete -f deploy/hub/crd/clusters.managedclustersets.yaml --ignore-not-found=true
+	kubectl delete -f deploy/hub/crd/proxy.managedproxyconfigurations.yaml --ignore-not-found=true
+	kubectl delete -f deploy/hub/crd/work.manifestworks.yaml --ignore-not-found=true
 
 install-hub-cluster-proxy:
 	helm upgrade --install -n open-cluster-management-cluster-proxy --create-namespace cluster-proxy deploy/hub/cluster-proxy
@@ -66,6 +66,7 @@ uninstall-agent-crd:
 	kubectl delete -f deploy/agent/crd/appliedmanifestworks.yaml --ignore-not-found=true
 
 install-agent-bootstrap-secret:
+	kubectl create ns open-cluster-management
 	kubectl create secret generic bootstrap-secret --from-file=kubeconfig=$(HUB-KUBECONFIG) -n open-cluster-management
 
 uninstall-agent-bootstrap-secret:
@@ -82,13 +83,13 @@ install-agent-registration:
 	kubectl apply -f deploy/agent/registration/service_account.yaml
 
 uninstall-agent-registration:
-	kubectl delete -f deploy/agent/registration/clusterrole.yaml
-	kubectl delete -f deploy/agent/registration/clusterrole_binding.yaml
-	kubectl delete -f deploy/agent/registration/deployment.yaml
-	kubectl delete -f deploy/agent/registration/role.yaml
-	kubectl delete -f deploy/agent/registration/role_binding.yaml
-	kubectl delete -f deploy/agent/registration/service_account.yaml
-	kubectl delete -f deploy/agent/registration/namespace.yaml
+	kubectl delete -f deploy/agent/registration/clusterrole.yaml --ignore-not-found=true
+	kubectl delete -f deploy/agent/registration/clusterrole_binding.yaml --ignore-not-found=true
+	kubectl delete -f deploy/agent/registration/deployment.yaml --ignore-not-found=true
+	kubectl delete -f deploy/agent/registration/role.yaml --ignore-not-found=true
+	kubectl delete -f deploy/agent/registration/role_binding.yaml --ignore-not-found=true
+	kubectl delete -f deploy/agent/registration/service_account.yaml --ignore-not-found=true
+	kubectl delete -f deploy/agent/registration/namespace.yaml --ignore-not-found=true
 
 install-agent-work:
 	kubectl create namespace open-cluster-management-agent
@@ -110,18 +111,15 @@ uninstall-agent-work:
 	kubectl delete -f deploy/agent/work/service_account.yaml --ignore-not-found=true
 	kubectl delete namespace open-cluster-management-agent --ignore-not-found=true
 
-install-hub: install-hub-crd install-hub-cluster-proxy install-hub-registration
+install-hub: install-hub-crd install-hub-registration
 
 uninstall-hub: uninstall-hub-cluster-proxy uninstall-hub-registration uninstall-hub-crd
-	@kubectl delete -f deploy/hub/managedclusteraddon.yaml --ignore-not-found=true
+	# @kubectl delete -f deploy/hub/managedclusteraddon.yaml --ignore-not-found=true
 
 apply-managedcluster:
 	@kubectl apply -f deploy/hub/managedclusteraddon.yaml
 
-apply-hub-kubeconfig:
-	kubectl create secret generic cluster-proxy-hub-kubeconfig --from-file=kubeconfig=$(HUB-KUBECONFIG) -n open-cluster-management-cluster-proxy
-
-install-agent: install-agent-crd install-agent-registration install-agent-bootstrap-secret install-agent-work
+install-agent: install-agent-crd install-agent-bootstrap-secret install-agent-registration install-agent-work
 
 uninstall-agent: uninstall-agent-bootstrap-secret uninstall-agent-work uninstall-agent-registration uninstall-agent-crd
 

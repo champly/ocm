@@ -17,8 +17,9 @@ spec:
       containers:
         - name: manager
           image: {{ .Values.image }}
-          imagePullPolicy: Always
+          command:
+            - /manager
           args:
             - --leader-elect=true
             - --signer-secret-namespace={{ .Release.Namespace }}
-            - -v=4
+          - -v=4
